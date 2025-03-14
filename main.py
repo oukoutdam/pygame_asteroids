@@ -12,6 +12,11 @@ def main():
     fpsClock = pg.time.Clock()
     dt = 0
 
+    updateable = pg.sprite.Group()
+    drawable = pg.sprite.Group()
+
+    Player.containers = (updateable, drawable)
+
     screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
 
@@ -21,9 +26,11 @@ def main():
                 return
 
         pg.Surface.fill(screen, (0,0,0))
-        player.update(dt)
-        player.draw(screen)
 
+        for entity in updateable:
+            entity.update(dt)
+        for entity in drawable:
+            entity.draw(screen)
 
         pg.display.flip()
         dt = fpsClock.tick(60) / 1000
