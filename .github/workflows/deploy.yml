@@ -1,0 +1,24 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]  # or your default branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Need full history for subtree push
+      
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          
+      - name: Create .nojekyll file
+        run: touch ./build/.nojekyll
+        
+      - name: Deploy to GitHub Pages
+        run: git subtree push --prefix build origin gh-pages
