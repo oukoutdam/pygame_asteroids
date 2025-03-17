@@ -1,3 +1,4 @@
+import asyncio
 import pygame as pg
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT,ASTEROID_MIN_RADIUS,ASTEROID_KINDS, ASTEROID_SPAWN_RATE,ASTEROID_MAX_RADIUS
 from player import Player
@@ -6,28 +7,29 @@ from asteroidfield import AsteroidField
 from shot import Shot
 
 
-def main():
-    pg.init()
-    print("Starting Asteroids")
-    print(f"Screen Width: {SCREEN_WIDTH}")
-    print(f"Screen Height: {SCREEN_HEIGHT}")
+pg.init()
+print("Starting Asteroids")
+print(f"Screen Width: {SCREEN_WIDTH}")
+print(f"Screen Height: {SCREEN_HEIGHT}")
 
-    fpsClock = pg.time.Clock()
+fpsClock = pg.time.Clock()
+
+updateable = pg.sprite.Group()
+drawable = pg.sprite.Group()
+asteroids = pg.sprite.Group()
+shots = pg.sprite.Group()
+
+Player.containers = (updateable, drawable)
+Asteroid.containers = (asteroids, updateable, drawable)
+AsteroidField.containers = (updateable)
+Shot.containers = (shots, updateable, drawable)
+
+screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+asteroid_field = AsteroidField()
+
+async def main():
     dt = 0
-
-    updateable = pg.sprite.Group()
-    drawable = pg.sprite.Group()
-    asteroids = pg.sprite.Group()
-    shots = pg.sprite.Group()
-
-    Player.containers = (updateable, drawable)
-    Asteroid.containers = (asteroids, updateable, drawable)
-    AsteroidField.containers = (updateable)
-    Shot.containers = (shots, updateable, drawable)
-
-    screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-    asteroid_field = AsteroidField()
 
     while True:
         for event in pg.event.get():
@@ -53,6 +55,6 @@ def main():
 
         pg.display.flip()
         dt = fpsClock.tick(60) / 1000
+        await asyncio.sleep(0)
 
-if __name__ == "__main__":
-    main()
+asyncio.run(main())
